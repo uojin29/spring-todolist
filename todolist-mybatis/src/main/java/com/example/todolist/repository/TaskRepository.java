@@ -1,6 +1,6 @@
 package com.example.todolist.repository;
 
-import com.example.todolist.dto.Task;
+import com.example.todolist.domain.Task;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,5 +14,5 @@ public interface TaskRepository {
 
     void update(Task task);
 
-    void remove(Task task);
+    void delete(Task task);
 }

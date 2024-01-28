@@ -1,8 +1,8 @@
 package com.example.todolist.controller;
 
-import com.example.todolist.dto.Task;
+import com.example.todolist.domain.Task;
 import com.example.todolist.exception.TaskNotFoundException;
-import com.example.todolist.repository.TaskRepository;
+import com.example.todolist.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,46 +18,31 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TaskController {
 
-    private final TaskRepository taskRepository;
+    private final TaskService taskService;
 
     @GetMapping("/")
     public String displayTasks(Model model) {
-        List<Task> tasks = taskRepository.findAll();
+        List<Task> tasks = taskService.getAllTasks();
         model.addAttribute("tasks", tasks);
-
         return "index";
     }
 
     @PostMapping("/tasks")
-    public String addTask(Task task) {
-        taskRepository.save(task);
-
+    public String addTask(@RequestParam String title) {
+        taskService.addTask(title);
         return "redirect:/";
     }
 
     @PutMapping("/tasks/{id}")
     @ResponseBody
-    public Map<String, Task> updateTask(@PathVariable Long id, @RequestBody Task form) {
-        taskRepository.findById(id)
-                .ifPresentOrElse(
-                        t -> {
-                            t.setTitle(form.getTitle());
-                            taskRepository.update(t);
-                        },
-                        () -> {
-                            throw new TaskNotFoundException("Task not found");
-                        }
-                );
-        return Collections.singletonMap(
-                "task", taskRepository.findById(id).orElseThrow()
-        );
+    public Map<String, Task> updateTask(@PathVariable Long id, @RequestBody TaskForm form) {
+        Task task = taskService.updateTask(id, form.getTitle());
+        return Collections.singletonMap("task", task);
     }
 
     @DeleteMapping("/tasks/{id}")
     public ResponseEntity<Void> completeTask(@PathVariable Long id) {
-        taskRepository.findById(id)
-                .ifPresent(taskRepository::remove);
-
+        taskService.removeTask(id);
         return ResponseEntity.ok().build();
     }
 
@@ -66,4 +51,3 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 }
-
