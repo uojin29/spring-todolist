@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>회원 가입</title>
+</head>
+<body>
+
+<h2>회원 가입 폼</h2>
+
+<form th:action="@{/member/create}" method="post">
+    <div>
+        <label for="username">사용자 이름:</label>
+        <input type="text" id="username" name="username" required>
+    </div>
+    <div>
+        <label for="password">비밀번호:</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+    <div>
+        <button type="submit">회원 가입</button>
+    </div>
+</form>
+
+<form th:action="@{/member/search}" method="get">
+    <div>
+        <label for="searchUsername">사용자 이름:</label>
+        <input type="text" id="searchUsername" name="username" required>
+    </div>
+    <div>
+        <button type="submit">검색</button>
+    </div>
+</form>
+
+<div th:if="${searchedMember}">
+    <h3>검색 결과</h3>
+    <p>아이디: <span th:text="${searchedMember.memberId}"></span></p>
+    <p>사용자 이름: <span th:text="${searchedMember.username}"></span></p>
+</div>
+
+<h2>멤버 리스트</h2>
+<div id="updateForm" style="display:none;">
+    <h2>회원 정보 업데이트</h2>
+    <form id="updateMemberForm" th:action="@{/member/update}" method="post">
+        <input type="hidden" id="updateMemberId" name="memberId" />
+        <div>
+            <label for="updateUsername">사용자 이름:</label>
+            <input type="text" id="updateUsername" name="username" required>
+        </div>
+        <div>
+            <label for="updatePassword">비밀번호:</label>
+            <input type="password" id="updatePassword" name="password" required>
+        </div>
+        <div>
+            <button type="submit">정보 업데이트</button>
+        </div>
+    </form>
+</div>
+
+<table border="1">
+    <tbody>
+    <tr th:each="member : ${members}">
+        <td th:text="${member.memberId}"></td>
+        <td th:text="${member.username}"></td>
+        <td>
+            <a href="javascript:;"
+               th:data-member-id="${member.memberId}"
+               th:data-username="${member.username}"
+               th:data-password="${member.password}"
+               onclick="showUpdateForm(this.getAttribute('data-member-id'), this.getAttribute('data-username'), this.getAttribute('data-password'))">업데이트</a>
+            <a href="javascript:;" th:onclick="'deleteMember(\'' + ${member.memberId} + '\');'">삭제</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script th:src="@{/member.js}"></script>
+
+</body>
+</html>

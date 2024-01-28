@@ -50,16 +50,16 @@ const updateTask = async (button, index) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            title: input.value
+            content: input.value
         })
     });
     const {task} = await response.json();
 
     const span = document.createElement('span');
     span.className = 'task-title';
-    span.textContent = task.title;
+    span.textContent = task.content;
 
-    button.dataset.title = task.title;
+    button.dataset.title = task.content;
     button.innerHTML = 'edit';
 
     input.replaceWith(span);
